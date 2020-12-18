@@ -1,51 +1,48 @@
 import socket
 import threading
 import random
+import time
 
-server_port = 1021
-client_port = 1022
+
+UDP_IP = "127.0.0.1"
+
+UDP_PORT_TO_RECIVE = 5006 #same to UDP_PORT of the last proc
+UDP_PORT_TO_SEND = 5005 #same like pro2
 
 tempurature = random.randint(0, 50)
 
-end = random.randint(10000, 20000)
+end = random.randint(5, 10)
 
-def send_thread(end, tempurature):
-    print("from client")
+def send_thread(var):
+    print("From Client proc 1")
+    global end
+    MESSAGE = str(var).encode()
     # create an INET, STREAMing socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # now connect to the web server on port 80 - the normal http port
-    #connect to resever
-    s.connect(("localhost",1022))
-    print("from client 1 connection done")
     while True:
-        if end == 0:
-            break
-        end -= 1
-    st='connection done'
-    byt=st.encode()
-    s.send(byt)
+        sock = socket.socket(socket.AF_INET, # Internet
+                        socket.SOCK_DGRAM) # UDP
+        time.sleep(end)
+        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT_TO_SEND))
+        print("Send : "+MESSAGE.decode("utf-8") )
+        MESSAGE = str(var).encode()
 
 
 
-def recive_thread():
-    print("from server")
-    # create an INET, STREAMing socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # now connect to the web server on port 80 - the normal http port
-    #connect to resever
-    s.bind(("localhost", server_port))
-    #queue of 5 connection
-    s.listen(5)
+def recive_thread(var):
+    print("From server pro 1")
+    global tempurature
+    sock = socket.socket(socket.AF_INET, # Internet
+                        socket.SOCK_DGRAM) # UDP
+    sock.bind((UDP_IP, UDP_PORT_TO_RECIVE))
     while True:
-        # now our endpoint knows about the OTHER endpoint.
-        clientsocket, address = s.accept()
-        print(f"tempuratue from 2."+clientsocket.recv(1024))
+        data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+        print("received message: %s" % data)
+        var = data
 
 
-"""x = threading.Thread(target=send_thread, args= (end, tempurature))
-y = threading.Thread(target=recive_thread)
+x = threading.Thread(target=send_thread, args=(tempurature, ))
+y = threading.Thread(target=recive_thread, args=(tempurature, ))
 x.start()
-y.start()"""
-
-
-send_thread(end, tempurature)
+y.start()
+x.join()
+y.join()
