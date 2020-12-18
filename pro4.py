@@ -2,18 +2,18 @@ import socket
 import threading
 import random
 import time
-from queue import Queue 
+from queue import Queue
 
 UDP_IP = "127.0.0.1"
-UDP_PORT_TO_RECIVE = 5005
-UDP_PORT_TO_SEND = 5006
+UDP_PORT_TO_RECIVE = 5007
+UDP_PORT_TO_SEND = 5008
 
 tempurature = [random.randint(0, 50)]
 
 end = random.randint(5, 10)
 
 def send_thread(in_q):
-    print("From Client proc 2")
+    print("From Client proc 4")
     global end
     MESSAGE = str(in_q.get()[0]).encode()
     print(MESSAGE)
@@ -29,7 +29,7 @@ def send_thread(in_q):
 
 
 def recive_thread(out_q):
-    print("From server pro 2")
+    print("From server pro 4")
     sock = socket.socket(socket.AF_INET, # Internet
                         socket.SOCK_DGRAM) # UDP
     sock.bind((UDP_IP, UDP_PORT_TO_RECIVE))

@@ -7,7 +7,7 @@ from queue import Queue
 
 UDP_IP = "127.0.0.1"
 
-UDP_PORT_TO_RECIVE = 5006 #same to UDP_PORT of the last proc
+UDP_PORT_TO_RECIVE = 5008 #same to UDP_PORT of the last proc
 UDP_PORT_TO_SEND = 5005 #same like pro2
 
 tempurature = [random.randint(0, 50)]
@@ -38,7 +38,7 @@ def recive_thread(out_q):
     sock.bind((UDP_IP, UDP_PORT_TO_RECIVE))
     while True:
         data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-        print("received message: %s" % data)
+        print("received tempurature: %s" % data)
         out_q.put(data)
 
 
